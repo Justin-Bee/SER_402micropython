@@ -74,6 +74,8 @@ void mp_task(void *pvParameter) {
     mp_thread_init(pxTaskGetStackStart(NULL), MP_TASK_STACK_LEN);
     #endif
     uart_init();
+    //TODO for Project 5 Trynkit
+    /* add an initialize for the bluetooth to  run at startup */
 
     // TODO: CONFIG_SPIRAM_SUPPORT is for 3.3 compatibility, remove after move to 4.0.
     #if CONFIG_ESP32_SPIRAM_SUPPORT || CONFIG_SPIRAM_SUPPORT
