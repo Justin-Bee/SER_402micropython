@@ -1,0 +1,1 @@
+ensure to update the git tag with the new version major, minor, build: we will stay at 1.12.xx for our project as we will not be doing anything major to the code base. 

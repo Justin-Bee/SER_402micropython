@@ -42,7 +42,7 @@ def get_version_info_from_git():
         # Check if there are any staged files.
         subprocess.check_call(["git", "diff-index", "--cached", "--quiet", "HEAD", "--"], stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError:
-        git_hash += "-dirty"
+        git_hash += "-Project5-Trynkit"  #was -dirty
     except OSError:
         return None
 
