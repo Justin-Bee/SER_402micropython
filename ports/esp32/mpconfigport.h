@@ -73,7 +73,6 @@
 #define MICROPY_PY_BUILTINS_SET             (1)
 #define MICROPY_PY_BUILTINS_SLICE           (1)
 #define MICROPY_PY_BUILTINS_SLICE_ATTRS     (1)
-#define MICROPY_PY_BUILTINS_SLICE_INDICES   (1)
 #define MICROPY_PY_BUILTINS_FROZENSET       (1)
 #define MICROPY_PY_BUILTINS_PROPERTY        (1)
 #define MICROPY_PY_BUILTINS_RANGE_ATTRS     (1)
@@ -161,7 +160,8 @@
 #define MICROPY_PY_FRAMEBUF                 (1)
 #define MICROPY_PY_USOCKET_EVENTS           (MICROPY_PY_WEBREPL)
 #define MICROPY_PY_BLUETOOTH_RANDOM_ADDR    (1)
-#define MICROPY_PY_BLUETOOTH_DEFAULT_NAME   ("MicroTrynkit")  /* changed from ESP32 to MicroTrynkit by Justin Bee for our Project US#193*/
+#define MICROPY_PY_BLUETOOTH_DEFAULT_NAME   ("MicroTrynkit")  /* changed from ESP32 to MicroTrynkit by Justin Bee for our Project US#193* 1.12.02/
+
 
 // fatfs configuration
 #define MICROPY_FATFS_ENABLE_LFN            (1)

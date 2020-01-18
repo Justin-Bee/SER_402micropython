@@ -54,7 +54,7 @@ A MicroPython user C module is a directory with the following files:
   See below for full usage example.
 
 
-Basic example
+Basic Example
 -------------
 
 This simple module named ``example`` provides a single function

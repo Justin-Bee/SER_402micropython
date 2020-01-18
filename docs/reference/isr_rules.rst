@@ -29,7 +29,7 @@ This summarises the points detailed below and lists the principal recommendation
 * Allocate an emergency exception buffer (see below).
 
 
-MicroPython issues
+MicroPython Issues
 ------------------
 
 The emergency exception buffer
@@ -214,7 +214,7 @@ Exceptions
 If an ISR raises an exception it will not propagate to the main loop. The interrupt will be disabled unless the
 exception is handled by the ISR code.
 
-General issues
+General Issues
 --------------
 
 This is merely a brief introduction to the subject of real time programming. Beginners should note
@@ -225,7 +225,7 @@ with an appreciation of the following issues.
 
 .. _ISR:
 
-Interrupt handler design
+Interrupt Handler Design
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 As mentioned above, ISR's should be designed to be as simple as possible. They should always return in a short,
@@ -276,7 +276,7 @@ advanced topic beyond the scope of this tutorial.
 
 .. _Critical:
 
-Critical sections
+Critical Sections
 ~~~~~~~~~~~~~~~~~
 
 An example of a critical section of code is one which accesses more than one variable which can be affected by an ISR. If
