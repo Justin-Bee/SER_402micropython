@@ -21,7 +21,7 @@ def get_version_info_from_git():
 
     # Note: git describe doesn't work if no tag is available
     try:
-        # Modifed by Justin Bee 1/17/2020
+        #modified by Justin Bee 1/17/2020
         git_tag = subprocess.check_output(["git", "describe"], stderr=subprocess.STDOUT, universal_newlines=True).strip()
     except subprocess.CalledProcessError as er:
         if er.returncode == 128:
@@ -43,7 +43,7 @@ def get_version_info_from_git():
         # Check if there are any staged files.
         subprocess.check_call(["git", "diff-index", "--cached", "--quiet", "HEAD", "--"], stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError:
-        git_hash += "-Project5-Trynkit"  #was -dirty
+        git_hash += "-dirty"
     except OSError:
         return None
 

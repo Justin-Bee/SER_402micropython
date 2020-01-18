@@ -1,4 +1,4 @@
-Logical & bitwise instructions
+Logical & Bitwise instructions
 ==============================
 
 Document conventions

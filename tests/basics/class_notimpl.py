@@ -48,6 +48,3 @@ except TypeError:
 
 # NotImplemented isn't handled specially in unary methods
 print(-c)
-
-# Test that NotImplemented can be hashed
-print(type(hash(NotImplemented)))
