@@ -57,6 +57,7 @@
 #include "modmachine.h"
 #include "modnetwork.h"
 #include "mpthreadport.h"
+#include "modbluetooth_nimble.h"   /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
 
 // MicroPython runs as a task under FreeRTOS
 #define MP_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
@@ -76,6 +77,7 @@ void mp_task(void *pvParameter) {
     uart_init();
     //TODO for Project 5 Trynkit
     /* add an initialize for the bluetooth to  run at startup */
+    mp_bluetooth_init(); /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
 
     // TODO: CONFIG_SPIRAM_SUPPORT is for 3.3 compatibility, remove after move to 4.0.
     #if CONFIG_ESP32_SPIRAM_SUPPORT || CONFIG_SPIRAM_SUPPORT
