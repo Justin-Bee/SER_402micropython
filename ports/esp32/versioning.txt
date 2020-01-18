@@ -1,0 +1,7 @@
+ensure to update the git tag with the new version major, minor, build: we will stay at 1.12.xx for our project as we will not be doing anything major to the code base. 
+
+run:
+	git tag -a v1.12.xx -m "Trynkit"
+	git push --tags
+check it by:
+	git describe
