@@ -174,6 +174,10 @@ int mp_bluetooth_gap_advertise_start(bool connectable, int32_t interval_us, cons
 // Stop advertisement. No-op when already stopped.
 void mp_bluetooth_gap_advertise_stop(void);
 
+
+
+
+
 // Start adding services. Must be called before mp_bluetooth_register_service.
 int mp_bluetooth_gatts_register_service_begin(bool append);
 // // Add a service with the given list of characteristics to the queue to be registered.

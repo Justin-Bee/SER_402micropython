@@ -58,6 +58,7 @@
 #include "modnetwork.h"
 #include "mpthreadport.h"
 #include "extmod/modbluetooth_nimble.h"   /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
+#include "extmod/modbluetooth.h" /* added by Justin Bee US#193 1/20/2020 v1.12.04 */
 
 // MicroPython runs as a task under FreeRTOS
 #define MP_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
@@ -119,6 +120,7 @@ soft_reset:
     //TODO for Project 5 Trynkit
     /* add an initialize for the bluetooth to  run at startup */
     mp_bluetooth_init(); /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
+    mp_bluetooth_gap_advertise_start(1, 1000000,0,0,0,0);  /* added by Justin Bee US#193 1/20/20 v1.12.04 */
 
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
