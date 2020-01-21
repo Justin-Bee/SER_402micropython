@@ -120,7 +120,10 @@ soft_reset:
     //TODO for Project 5 Trynkit
     /* add an initialize for the bluetooth to  run at startup */
     mp_bluetooth_init(); /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
-    mp_bluetooth_gap_advertise_start(1, 1000000,0,0,0,0);  /* added by Justin Bee US#193 1/20/20 v1.12.04 */
+    sync_cb(); /* added by Justin Bee US#193 1/21/2020 v1.12.04 */ //TODO Remove maybe if below works out
+    const unsigned char adv_data = 0x65; //TODO need to work on this, "INVALID EIR: 101 bytes missing", Empty packet
+    int size = sizeof(adv_data);
+    mp_bluetooth_gap_advertise_start(1, 1000000, &adv_data, size,0,0);  /* added by Justin Bee US#193 1/20/20 v1.12.04 */
 
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
