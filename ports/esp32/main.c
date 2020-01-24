@@ -117,13 +117,16 @@ soft_reset:
     // initialise peripherals
     machine_pins_init();
 
-    //TODO for Project 5 Trynkit
+    /* TODO for Project 5 Trynkit */
+    /* ensure bluetooth is disabled before we enable it */
+    mp_bluetooth_deinit(); /* added by Justin Bee US#193 v1.12.04 1/23/2020 */
     /* add an initialize for the bluetooth to  run at startup */
     mp_bluetooth_init(); /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
-    sync_cb(); /* added by Justin Bee US#193 1/21/2020 v1.12.04 */ //TODO Remove maybe if below works out
-    const unsigned char adv_data = 0x65; //TODO need to work on this, "INVALID EIR: 101 bytes missing", Empty packet
-    int size = sizeof(adv_data);
-    mp_bluetooth_gap_advertise_start(1, 1000000, &adv_data, size,0,0);  /* added by Justin Bee US#193 1/20/20 v1.12.04 */
+    //TODO issue when connecting to ESP32 device, the device resets and get Error 133 (0x85) GATT error
+  //  const unsigned char adv_data = 0x065; //TODO need to work on this, "INVALID EIR: 101 bytes missing", Empty packet
+ //   int size = sizeof(adv_data);
+    mp_bluetooth_gap_advertise_start(1, 1000000, 0, 0,0,0);  /* added by Justin Bee US#193 1/20/20 v1.12.04 */
+
 
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
