@@ -41,7 +41,7 @@
 #include "services/gap/ble_svc_gap.h"
 
 #ifndef MICROPY_PY_BLUETOOTH_DEFAULT_NAME
-#define MICROPY_PY_BLUETOOTH_DEFAULT_NAME "PYBD"
+#define MICROPY_PY_BLUETOOTH_DEFAULT_NAME "MicroTrynkit"  /* changed by Justin Bee v1.12.04 US#193 */
 #endif
 
 #define DEBUG_EVENT_printf(...) //printf(__VA_ARGS__)

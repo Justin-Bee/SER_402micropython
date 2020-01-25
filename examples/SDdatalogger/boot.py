@@ -8,6 +8,7 @@
 
 import pyb
 
+
 pyb.LED(3).on()                 # indicate we are waiting for switch press
 pyb.delay(2000)                 # wait for user to maybe press the switch
 switch_value = pyb.Switch()()   # sample the switch at end of delay

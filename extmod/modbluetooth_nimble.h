@@ -52,4 +52,5 @@ void mp_bluetooth_nimble_port_deinit(void);
 void mp_bluetooth_nimble_port_start(void);
 int mp_bluetooth_init(void); /*added by Justin Bee US#224 1/18/2020 v1.12.03 */
 
+
 #endif // MICROPY_INCLUDED_EXTMOD_MODBLUETOOTH_NIMBLE_H

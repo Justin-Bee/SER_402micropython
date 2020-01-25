@@ -2,5 +2,22 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/asf4" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/axtls" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/berkeley-db-1.xx" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/libffi" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/lwip" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/mbedtls" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/mbedtls/crypto" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/mynewt-nimble" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/nrfx" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/stm32lib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinyusb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinyusb/hw/mcu/microchip/samd/asf4" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinyusb/hw/mcu/nordic/nrfx" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinyusb/hw/mcu/nxp/lpcopen" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinyusb/hw/mcu/st/stm32lib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinyusb/tools/uf2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinyusb/tools/uf2/hidapi" vcs="Git" />
   </component>
 </project>
