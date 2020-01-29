@@ -308,7 +308,7 @@ int mp_bluetooth_init(void) {
     while (mp_bluetooth_nimble_ble_state != MP_BLUETOOTH_NIMBLE_BLE_STATE_ACTIVE) {
         MICROPY_EVENT_POLL_HOOK
     }
-
+    ble_svc_gap_device_name_set(MICROPY_PY_BLUETOOTH_DEFAULT_NAME); /* added by Justin Bee US#257 1/26/2020 v1.12.04 */
     return 0;
 }
 
