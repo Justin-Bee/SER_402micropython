@@ -57,7 +57,6 @@
 #include "modmachine.h"
 #include "modnetwork.h"
 #include "mpthreadport.h"
-#include "extmod/modbluetooth_nimble.h"   /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
 
 // MicroPython runs as a task under FreeRTOS
 #define MP_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
@@ -115,10 +114,6 @@ soft_reset:
 
     // initialise peripherals
     machine_pins_init();
-
-    //TODO for Project 5 Trynkit
-    /* add an initialize for the bluetooth to  run at startup */
-    mp_bluetooth_init(); /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
 
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
