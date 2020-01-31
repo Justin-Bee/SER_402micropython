@@ -71,5 +71,5 @@ print(payload)
 # set gap_advertise(interval, adv_data?)
 bt.gap_advertise(100000, 'MicroTrynkit') #need to figure out why its not displaying
 
-# tried a to build with a different version of ESP-IDF but the build failed, reverting back to the experimental branch
-#may need to reclone the project(ESP-IDF) the gap_advertise is not working for me as I expect it should
+# building now with ESP-IDF 3.3.1 has support for BLE and WiFi
+# this could be a better option going forward incase BLE does not work out with the upload time
