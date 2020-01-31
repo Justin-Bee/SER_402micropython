@@ -65,8 +65,11 @@ def advertising_payload(limited_disc=False, br_edr=False, name=None, services=No
 
     return payload
 
-payload = advertising_payload(name='MicroTyrnkit', services=[ubluetooth.UUID(0x181A), ubluetooth.UUID('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')])
+payload = advertising_payload(name='MicroTrynkit', services=[ubluetooth.UUID(0x181A), ubluetooth.UUID('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')])
 
 print(payload)
 # set gap_advertise(interval, adv_data?)
-bt.gap_advertise(100000) #need to figure out why its not displaying
+bt.gap_advertise(100000, 'MicroTrynkit') #need to figure out why its not displaying
+
+# tried a to build with a different version of ESP-IDF but the build failed, reverting back to the experimental branch
+#may need to reclone the project(ESP-IDF) the gap_advertise is not working for me as I expect it should
