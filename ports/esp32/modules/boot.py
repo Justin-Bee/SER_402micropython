@@ -102,7 +102,7 @@ bt.gap_advertise(100000) #need to figure out why its not displaying
 _adv_service = ubluetooth.UUID(0x1825)
 
 #start the gatt service
-bt.gatts_service_register_services(_adv_service, ubluetooth.FLAG_READ, ubluetooth.FLAG_WRITE)
+bt.gatts_register_services(_adv_service)
 
 #gatt s_registerservice()
 
