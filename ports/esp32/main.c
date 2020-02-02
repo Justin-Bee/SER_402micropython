@@ -57,6 +57,7 @@
 #include "modmachine.h"
 #include "modnetwork.h"
 #include "mpthreadport.h"
+#include "extmod/modbluetooth.h"
 
 // MicroPython runs as a task under FreeRTOS
 #define MP_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
@@ -115,6 +116,8 @@ soft_reset:
     // initialise peripherals
     machine_pins_init();
 
+
+
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
     pyexec_file_if_exists("boot.py");
@@ -135,6 +138,16 @@ soft_reset:
             }
         }
     }
+
+    /* TODO for Project 5 Trynkit */
+    /* ensure bluetooth is disabled before we enable it */
+    // mp_bluetooth_deinit(); /* added by Justin Bee US#193 v1.12.04 1/23/2020 */
+    /* add an initialize for the bluetooth to  run at startup */
+   //  mp_bluetooth_init(); /* added by Justin Bee US#224 1/18/2020 v1.12.03*/
+    //TODO issue when connecting to ESP32 device, the device resets and get Error 133 (0x85) GATT error
+   //  const unsigned char *adv_data = 0x020106110707b9f9d750a420897740cbfd2cc1804809084247d3131312053; //TODO need to work on this, "INVALID EIR: 101 bytes missing", Empty packet
+    //  int size = sizeof(adv_data);
+    //  mp_bluetooth_gap_advertise_start(1, 1000000, adv_data, size, adv_data,size);  /* added by Justin Bee US#193 1/20/20 v1.12.04 */
 
     machine_timer_deinit_all();
 

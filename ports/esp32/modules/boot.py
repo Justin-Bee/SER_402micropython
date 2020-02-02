@@ -65,11 +65,48 @@ def advertising_payload(limited_disc=False, br_edr=False, name=None, services=No
 
     return payload
 
-payload = advertising_payload(name='MicroTrynkit', services=[ubluetooth.UUID(0x181A), ubluetooth.UUID('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')])
+def decode_field(payload, adv_type):
+    i = 0
+    result = []
+    while i + 1 < len(payload):
+        if payload[i + 1] == adv_type:
+            result.append(payload[i + 2:i + payload[i] + 1])
+        i += 1 + payload[i]
+    return result
+
+def decode_name(payload):
+    n = decode_field(payload, _ADV_TYPE_NAME)
+    return str(n[0], 'utf-8') if n else ''
+
+
+def decode_services(payload):
+    services = []
+    for u in decode_field(payload, _ADV_TYPE_UUID16_COMPLETE):
+        services.append(ubluetooth.UUID(struct.unpack('<h', u)[0]))
+    for u in decode_field(payload, _ADV_TYPE_UUID32_COMPLETE):
+        services.append(ubluetooth.UUID(struct.unpack('<d', u)[0]))
+    for u in decode_field(payload, _ADV_TYPE_UUID128_COMPLETE):
+        services.append(ubluetooth.UUID(u))
+    return services
+
+payload = bytearray()
+payload = advertising_payload(services=[ubluetooth.UUID(0x1812), ubluetooth.UUID('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')])
+
 
 print(payload)
 # set gap_advertise(interval, adv_data?)
-bt.gap_advertise(100000, 'MicroTrynkit') #need to figure out why its not displaying
+bt.gap_advertise(100000) #need to figure out why its not displaying
+
+# sest the UUID for our device
+#0x1825 is the SIG service for Object Transfer Service
+_adv_service = ubluetooth.UUID(0x1825)
+
+#start the gatt service
+bt.gatts_service_register_services(_adv_service, ubluetooth.FLAG_READ, ubluetooth.FLAG_WRITE)
+
+#gatt s_registerservice()
+
+#ubluetooth.UUID() 16 bit or 128 bit
 
 # building now with ESP-IDF 3.3.1 has support for BLE and WiFi
 # this could be a better option going forward incase BLE does not work out with the upload time
