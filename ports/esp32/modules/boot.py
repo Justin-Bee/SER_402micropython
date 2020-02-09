@@ -57,7 +57,7 @@ bt.active(1)
 #define the bt_irq
 def bt_irq(event, data):
     if event == _IRQ_CENTRAL_CONNECT:
-        print("IRQ_CENTEAL_CONNECT")
+        print("IRQ_CENTRAL_CONNECT")
     elif event == _IRQ_CENTRAL_DISCONNECT:
         print("IRQ_CENTRAL_DISCONNECT")
     elif event == _IRQ_GATTS_WRITE:
@@ -77,6 +77,7 @@ def adv_encode(adv_type, value):
 
 def adv_encode_name(name):
     return adv_encode(const(0x09), name.encode())
+
 
 
 # set the UUID for the GATT Service
