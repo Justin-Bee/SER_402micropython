@@ -67,31 +67,31 @@ def bt_irq(event, data):
 
 bt.irq(bt_irq)
 
-
-
-
-
+#encode the advertise type and the value passed.
 def adv_encode(adv_type, value):
     return bytes((len(value) + 1, adv_type,)) + value
 
-
+#helper function to encode the advertising name passed
 def adv_encode_name(name):
-    return adv_encode(const(0x09), name.encode())
-
-
+    return adv_encode(_ADV_TYPE_NAME, name.encode())
 
 # set the UUID for the GATT Service
-# Bluetooth SIG GATT Service  - 0x1825 is Object Transfer Service
 _adv_service = ubluetooth.UUID(0x1825)
-# Bluetooth SIG GATT Characteristic - 0x2AC8 is Object Changed
-_adv_characteristic = (ubluetooth.UUID(0x2AC8), ubluetooth.FLAG_WRITE,)
-# MicroTrynkit Service
-_my_service = ((_adv_service, (_adv_characteristic,),),)
-#start the gatt service
-((handle,),)= bt.gatts_register_services(_my_service)
 
-#cannot advertise until after registering services
-# set gap_advertise(interval, adv_data?)
+#UUID for the TX characteristic
+#UUID created by https://www.uuidgenerator.net/version4
+#set the ubluetooth flag for read
+_adv_TX_service = (ubluetooth.UUID('30ff6dae-fbfe-453b-8a99-9688fea23832'), ubluetooth.FLAG_READ,)
+
+
+# MicroTrynkit Service
+_my_service = ((_adv_service, (_adv_TX_service,),),)
+#start the gatt service
+# tx_handle is for the TX service to be used for the reads
+((tx_handle,),)= bt.gatts_register_services(_my_service)
+
+#gap_advertise()
+#params: interval, adv_data
 bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))  #works correctly
 
 
@@ -99,3 +99,6 @@ bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))  #works correctly
 
 # building now with ESP-IDF 3.3.1 has support for BLE and WiFi
 # this could be a better option going forward incase BLE does not work out with the upload time
+
+#END OF FILE
+########################################################################################################################
