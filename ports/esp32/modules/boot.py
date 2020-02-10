@@ -78,17 +78,23 @@ def adv_encode_name(name):
 # set the UUID for the GATT Service
 _adv_service = ubluetooth.UUID(0x1825)
 
-#UUID for the TX characteristic
+#UUID for the TX characteristic - 30ff6dae-fbfe-453b-8a99-9688fea23832
 #UUID created by https://www.uuidgenerator.net/version4
 #set the ubluetooth flag for read
 _adv_TX_service = (ubluetooth.UUID('30ff6dae-fbfe-453b-8a99-9688fea23832'), ubluetooth.FLAG_READ,)
 
+#UUID for the RX characteristic - fbdf3e86-c18c-4e5b-aace-e7cc03257f7c
+#UUID created by https://www.uuidgenerator.net/version4
+#set the ubluetooth flag for write
+_adv_RX_service = (ubluetooth.UUID('fbdf3e86-c18c-4e5b-aace-e7cc03257f7c'), ubluetooth.FLAG_WRITE,)
+
 
 # MicroTrynkit Service
-_my_service = ((_adv_service, (_adv_TX_service,),),)
+#including the TX and RX characteristics created above.
+_my_service = ((_adv_service, (_adv_TX_service, _adv_RX_service,),),)
 #start the gatt service
 # tx_handle is for the TX service to be used for the reads
-((tx_handle,),)= bt.gatts_register_services(_my_service)
+((tx_handle, rx_handle),)= bt.gatts_register_services(_my_service)
 
 #gap_advertise()
 #params: interval, adv_data
