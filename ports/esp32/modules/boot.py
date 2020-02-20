@@ -62,6 +62,7 @@ def bt_irq(event, data):
         print("IRQ_CENTRAL_DISCONNECT")
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
+        print(bt.gatts_read(rx_handle)) # This will print to console what is sent to the device.
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
 
@@ -95,6 +96,9 @@ _my_service = ((_adv_service, (_adv_TX_service, _adv_RX_service,),),)
 #start the gatt service
 # tx_handle is for the TX service to be used for the reads
 ((tx_handle, rx_handle),)= bt.gatts_register_services(_my_service)
+# increase the size of the buffer, default is 20 bytes
+#need to ensure we pick something that is big enough for file transfers
+bt.gatts_write(rx_handle, bytes(1024))
 
 #gap_advertise()
 #params: interval, adv_data
