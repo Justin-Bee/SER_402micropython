@@ -62,7 +62,12 @@ def bt_irq(event, data):
         print("IRQ_CENTRAL_DISCONNECT")
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
-        print(bt.gatts_read(rx_handle)) # This will print to console what is sent to the device.
+        x = bt.gatts_read(rx_handle) # This will print to console what is sent to the device.
+        print(type(x))
+        # create the file and save in flash
+        f = open("main.py", 'w')
+        f.write(x)
+        f.close()
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
 
