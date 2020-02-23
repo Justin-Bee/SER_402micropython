@@ -11,6 +11,7 @@
 
 import ubluetooth
 from ubluetooth import BLE
+import machine
 
 from micropython import const
 import struct
@@ -68,6 +69,7 @@ def bt_irq(event, data):
         f = open("main.py", 'w')
         f.write(x)
         f.close()
+        machine.reset()
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
 
