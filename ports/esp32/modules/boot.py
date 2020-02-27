@@ -12,6 +12,7 @@
 import ubluetooth
 from ubluetooth import BLE
 import machine
+import time
 
 from micropython import const
 import struct
@@ -52,6 +53,8 @@ _IRQ_GATTC_INDICATE                  = const(1 << 14)
 
 # create BLE variable
 bt= BLE()
+#setup the bleuart
+#uart = BLEUART(bt)
 # set active to True initializing the bluetooth module
 bt.active(1)
 
@@ -63,8 +66,13 @@ def bt_irq(event, data):
         print("IRQ_CENTRAL_DISCONNECT")
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
+        #baseline time of before the transfer
+        time_before = time.time()
         x = bt.gatts_read(rx_handle) # This will print to console what is sent to the device.
-        print(type(x))
+        #time for after the transfer
+        time_after = time.time()
+        #print out the total time of the transfer
+        print(time_after - time_before)
         # create the file and save in flash
         f = open("main.py", 'w')
         f.write(x)
@@ -72,6 +80,8 @@ def bt_irq(event, data):
         machine.reset()
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
+        tx_handle = "Test"
+
 
 bt.irq(bt_irq)
 
@@ -111,6 +121,8 @@ bt.gatts_write(rx_handle, bytes(1024))
 #params: interval, adv_data
 bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))  #works correctly
 
+#bt.gatts_notify(tx_handle, 1234) #EIO error with this code
+
 
 #ubluetooth.UUID() 16 bit or 128 bit
 
@@ -119,3 +131,4 @@ bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))  #works correctly
 
 #END OF FILE
 ########################################################################################################################
+
