@@ -13,6 +13,7 @@ import ubluetooth
 from ubluetooth import BLE
 import machine
 import time
+import os
 
 from micropython import const
 import struct
@@ -73,11 +74,19 @@ def bt_irq(event, data):
         time_after = time.time()
         #print out the total time of the transfer
         print(time_after - time_before)
+        #check if file exists, if it does read the contents and append to it
+        if(os.stat('main.py')):
+            temp = open('main.py')
+            temp = temp + x
+            f = open("main.py", 'w')
+            f.write(temp)
+            f.close()
         # create the file and save in flash
-        f = open("main.py", 'w')
-        f.write(x)
-        f.close()
-        machine.reset()
+        else:
+            f = open('main.py', 'w')
+            f.write(x)
+            f.close()
+    #    machine.reset()
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
         tx_handle = "Test"
