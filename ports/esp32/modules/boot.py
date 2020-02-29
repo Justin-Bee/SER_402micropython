@@ -65,6 +65,7 @@ def bt_irq(event, data):
         print("IRQ_CENTRAL_CONNECT")
     elif event == _IRQ_CENTRAL_DISCONNECT:
         print("IRQ_CENTRAL_DISCONNECT")
+        machine.reset()
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
         #baseline time of before the transfer
@@ -75,18 +76,9 @@ def bt_irq(event, data):
         #print out the total time of the transfer
         print(time_after - time_before)
         #check if file exists, if it does read the contents and append to it
-        if(os.stat('main.py')):
-            temp = open('main.py')
-            temp = temp + x
-            f = open("main.py", 'w')
-            f.write(temp)
-            f.close()
-        # create the file and save in flash
-        else:
-            f = open('main.py', 'w')
-            f.write(x)
-            f.close()
-    #    machine.reset()
+        f = open('main.py', 'a')
+        f.write(x)
+        f.close()
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
         tx_handle = "Test"
