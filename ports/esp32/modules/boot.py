@@ -77,11 +77,15 @@ def bt_irq(event, data):
         #baseline time of before the transfer
         time_before = time.time()
         x = bt.gatts_read(rx_handle)
-        x = x + '\n'
-        #check if file exists, if it does read the contents and append to it
-        f = open('main.py', 'a')
-        f.write(x)
-        f.close()
+        temp = x.decode('utf-8')
+        if(temp == 'erase'):
+            os.remove('main.py')
+        else:
+            x = x + '\n'
+            #check if file exists, if it does read the contents and append to it
+            f = open('main.py', 'a')
+            f.write(x)
+            f.close()
         tx_handle = 'Upload finished'
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
