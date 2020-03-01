@@ -51,7 +51,9 @@ _IRQ_GATTC_WRITE_STATUS              = const(1 << 12)
 _IRQ_GATTC_NOTIFY                    = const(1 << 13)
 _IRQ_GATTC_INDICATE                  = const(1 << 14)
 
-
+#initialize variables
+time_after = 0
+time_before = 0
 # create BLE variable
 bt= BLE()
 #setup the bleuart
@@ -65,20 +67,22 @@ def bt_irq(event, data):
         print("IRQ_CENTRAL_CONNECT")
     elif event == _IRQ_CENTRAL_DISCONNECT:
         print("IRQ_CENTRAL_DISCONNECT")
+        #time for after the transfer
+       # time_after = time.time()
+        #print out the total time of the transfer
+    #    print(time_after - time_before)
         machine.reset()
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
         #baseline time of before the transfer
         time_before = time.time()
-        x = bt.gatts_read(rx_handle) # This will print to console what is sent to the device.
-        #time for after the transfer
-        time_after = time.time()
-        #print out the total time of the transfer
-        print(time_after - time_before)
+        x = bt.gatts_read(rx_handle)
+        x = x + '\n'
         #check if file exists, if it does read the contents and append to it
         f = open('main.py', 'a')
         f.write(x)
         f.close()
+        tx_handle = 'Upload finished'
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
         tx_handle = "Test"
