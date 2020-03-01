@@ -12,6 +12,8 @@
 import ubluetooth
 from ubluetooth import BLE
 import machine
+import time
+import os
 
 from micropython import const
 import struct
@@ -49,9 +51,13 @@ _IRQ_GATTC_WRITE_STATUS              = const(1 << 12)
 _IRQ_GATTC_NOTIFY                    = const(1 << 13)
 _IRQ_GATTC_INDICATE                  = const(1 << 14)
 
-
+#initialize variables
+time_after = 0
+time_before = 0
 # create BLE variable
 bt= BLE()
+#setup the bleuart
+#uart = BLEUART(bt)
 # set active to True initializing the bluetooth module
 bt.active(1)
 
@@ -61,17 +67,26 @@ def bt_irq(event, data):
         print("IRQ_CENTRAL_CONNECT")
     elif event == _IRQ_CENTRAL_DISCONNECT:
         print("IRQ_CENTRAL_DISCONNECT")
+        #time for after the transfer
+       # time_after = time.time()
+        #print out the total time of the transfer
+    #    print(time_after - time_before)
+        machine.reset()
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
-        x = bt.gatts_read(rx_handle) # This will print to console what is sent to the device.
-        print(type(x))
-        # create the file and save in flash
-        f = open("main.py", 'w')
+        #baseline time of before the transfer
+        time_before = time.time()
+        x = bt.gatts_read(rx_handle)
+        x = x + '\n'
+        #check if file exists, if it does read the contents and append to it
+        f = open('main.py', 'a')
         f.write(x)
         f.close()
-        machine.reset()
+        tx_handle = 'Upload finished'
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
+        tx_handle = "Test"
+
 
 bt.irq(bt_irq)
 
@@ -111,6 +126,8 @@ bt.gatts_write(rx_handle, bytes(1024))
 #params: interval, adv_data
 bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))  #works correctly
 
+#bt.gatts_notify(tx_handle, 1234) #EIO error with this code
+
 
 #ubluetooth.UUID() 16 bit or 128 bit
 
@@ -119,3 +136,4 @@ bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))  #works correctly
 
 #END OF FILE
 ########################################################################################################################
+
