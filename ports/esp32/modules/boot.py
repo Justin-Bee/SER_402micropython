@@ -51,29 +51,33 @@ _IRQ_GATTC_WRITE_STATUS              = const(1 << 12)
 _IRQ_GATTC_NOTIFY                    = const(1 << 13)
 _IRQ_GATTC_INDICATE                  = const(1 << 14)
 
-#initialize variables
-time_after = 0
-time_before = 0
+
 # create BLE variable
 bt= BLE()
 #setup the bleuart
 #uart = BLEUART(bt)
+time_after = time.time()
+time_before = time.time()
+timeCheck = False
 # set active to True initializing the bluetooth module
 bt.active(1)
 
 #define the bt_irq
 def bt_irq(event, data):
+    time_after = time.time()
+    time_before = time.time()
     if event == _IRQ_CENTRAL_CONNECT:
         print("IRQ_CENTRAL_CONNECT")
     elif event == _IRQ_CENTRAL_DISCONNECT:
         print("IRQ_CENTRAL_DISCONNECT")
         #time for after the transfer
-       # time_after = time.time()
+        time_after = time.time()
         #print out the total time of the transfer
-    #    print(time_after - time_before)
+        print(time_after - time_before)
         machine.reset()
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
+        timer()
         #baseline time of before the transfer
         time_before = time.time()
         x = bt.gatts_read(rx_handle)
@@ -93,6 +97,12 @@ def bt_irq(event, data):
 
 
 bt.irq(bt_irq)
+
+def timer():
+    if(timeCheck == False):
+        timerCheck= True
+        time_before = time.time()
+
 
 #encode the advertise type and the value passed.
 def adv_encode(adv_type, value):
