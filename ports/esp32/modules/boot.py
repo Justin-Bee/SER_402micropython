@@ -64,7 +64,7 @@ bt.active(1)
 
 #define the bt_irq
 def bt_irq(event, data):
-
+    global timeCheck
     if event == _IRQ_CENTRAL_CONNECT:
         print("IRQ_CENTRAL_CONNECT")
     elif event == _IRQ_CENTRAL_DISCONNECT:
