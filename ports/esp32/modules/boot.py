@@ -64,22 +64,17 @@ bt.active(1)
 
 #define the bt_irq
 def bt_irq(event, data):
-    time_after = time.time()
-    time_before = time.time()
+
     if event == _IRQ_CENTRAL_CONNECT:
         print("IRQ_CENTRAL_CONNECT")
     elif event == _IRQ_CENTRAL_DISCONNECT:
         print("IRQ_CENTRAL_DISCONNECT")
-        #time for after the transfer
-        time_after = time.time()
-        #print out the total time of the transfer
-        print(time_after - time_before)
+        stop_timer()
+        timeCheck = False
         machine.reset()
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
         timer()
-        #baseline time of before the transfer
-        time_before = time.time()
         x = bt.gatts_read(rx_handle)
         temp = x.decode('utf-8')
         if(temp == 'erase'):
@@ -99,9 +94,18 @@ def bt_irq(event, data):
 bt.irq(bt_irq)
 
 def timer():
+    global time_before
+    global timeCheck
     if(timeCheck == False):
-        timerCheck= True
+        timeCheck = True
         time_before = time.time()
+
+
+def stop_timer():
+    global time_before
+    global time_after
+    time_after = time.time()
+    print("Upload completed in " +str(time_after - time_before)+ " seconds.")
 
 
 #encode the advertise type and the value passed.
