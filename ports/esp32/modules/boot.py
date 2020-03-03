@@ -51,31 +51,30 @@ _IRQ_GATTC_WRITE_STATUS              = const(1 << 12)
 _IRQ_GATTC_NOTIFY                    = const(1 << 13)
 _IRQ_GATTC_INDICATE                  = const(1 << 14)
 
-#initialize variables
-time_after = 0
-time_before = 0
+
 # create BLE variable
 bt= BLE()
 #setup the bleuart
 #uart = BLEUART(bt)
+time_after = time.time()
+time_before = time.time()
+timeCheck = False
 # set active to True initializing the bluetooth module
 bt.active(1)
 
 #define the bt_irq
 def bt_irq(event, data):
+
     if event == _IRQ_CENTRAL_CONNECT:
         print("IRQ_CENTRAL_CONNECT")
     elif event == _IRQ_CENTRAL_DISCONNECT:
         print("IRQ_CENTRAL_DISCONNECT")
-        #time for after the transfer
-       # time_after = time.time()
-        #print out the total time of the transfer
-    #    print(time_after - time_before)
+        stop_timer()
+        timeCheck = False
         machine.reset()
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
-        #baseline time of before the transfer
-        time_before = time.time()
+        timer()
         x = bt.gatts_read(rx_handle)
         temp = x.decode('utf-8')
         if(temp == 'erase'):
@@ -93,6 +92,21 @@ def bt_irq(event, data):
 
 
 bt.irq(bt_irq)
+
+def timer():
+    global time_before
+    global timeCheck
+    if(timeCheck == False):
+        timeCheck = True
+        time_before = time.time()
+
+
+def stop_timer():
+    global time_before
+    global time_after
+    time_after = time.time()
+    print("Upload completed in " +str(time_after - time_before)+ " seconds.")
+
 
 #encode the advertise type and the value passed.
 def adv_encode(adv_type, value):
