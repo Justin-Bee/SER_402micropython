@@ -71,7 +71,8 @@ def bt_irq(event, data):
         print("IRQ_CENTRAL_DISCONNECT")
         stop_timer()
         timeCheck = False
-        machine.reset()
+        #for testing purposes I had to remove the reset to connect with nrfConnect sniffer app
+     #   machine.reset()
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
         timer()
@@ -80,15 +81,19 @@ def bt_irq(event, data):
         if(temp == 'erase'):
             os.remove('main.py')
         else:
+            # add newline char to end of the line that was sent
             x = x + '\n'
-            #check if file exists, if it does read the contents and append to it
+            # create a new file or append to existing
             f = open('main.py', 'a')
+            #write to the file
             f.write(x)
+            #close the file
             f.close()
         tx_handle = 'Upload finished'
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
         tx_handle = "Test"
+
 
 
 bt.irq(bt_irq)
@@ -144,8 +149,10 @@ bt.gatts_write(rx_handle, bytes(1024))
 #params: interval, adv_data
 bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))  #works correctly
 
-#bt.gatts_notify(tx_handle, 1234) #EIO error with this code
-
+# > is for big endian as http protocol is big endian
+# s is for string
+#bt.gatts_read(tx_handle, struct.pack('>s', 'testing read'))
+bt.gatts_write(tx_handle, str.encode("hopefully this works"))
 
 #ubluetooth.UUID() 16 bit or 128 bit
 
