@@ -51,14 +51,14 @@ _IRQ_GATTC_WRITE_STATUS              = const(1 << 12)
 _IRQ_GATTC_NOTIFY                    = const(1 << 13)
 _IRQ_GATTC_INDICATE                  = const(1 << 14)
 
-
-# create BLE variable
-bt= BLE()
-#setup the bleuart
-#uart = BLEUART(bt)
+#Global functions for the timer
 time_after = time.time()
 time_before = time.time()
 timeCheck = False
+
+# create BLE variable
+bt= BLE()
+
 # set active to True initializing the bluetooth module
 bt.active(1)
 
@@ -72,7 +72,7 @@ def bt_irq(event, data):
         stop_timer()
         timeCheck = False
         #for testing purposes I had to remove the reset to connect with nrfConnect sniffer app
-     #   machine.reset()
+        machine.reset()
     elif event == _IRQ_GATTS_WRITE:
         print("IRQ_GATTS_WRITE")
         timer()
@@ -95,9 +95,9 @@ def bt_irq(event, data):
         tx_handle = "Test"
 
 
-
 bt.irq(bt_irq)
 
+# timer() - this function gets the time at the beginning of the upload
 def timer():
     global time_before
     global timeCheck
@@ -105,7 +105,7 @@ def timer():
         timeCheck = True
         time_before = time.time()
 
-
+# stop_timer() - this function gets the time at the end of the upload
 def stop_timer():
     global time_before
     global time_after
@@ -138,20 +138,21 @@ _adv_RX_service = (ubluetooth.UUID('fbdf3e86-c18c-4e5b-aace-e7cc03257f7c'), ublu
 # MicroTrynkit Service
 #including the TX and RX characteristics created above.
 _my_service = ((_adv_service, (_adv_TX_service, _adv_RX_service,),),)
+
 #start the gatt service
 # tx_handle is for the TX service to be used for the reads
 ((tx_handle, rx_handle),)= bt.gatts_register_services(_my_service)
+
 # increase the size of the buffer, default is 20 bytes
 #need to ensure we pick something that is big enough for file transfers
 bt.gatts_write(rx_handle, bytes(1024))
 
 #gap_advertise()
 #params: interval, adv_data
-bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))  #works correctly
+bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))
 
-# > is for big endian as http protocol is big endian
-# s is for string
-#bt.gatts_read(tx_handle, struct.pack('>s', 'testing read'))
+
+#this function sends to data from esp32 to be read from connected device. Just for testing purposes now.
 bt.gatts_write(tx_handle, str.encode("hopefully this works"))
 
 #ubluetooth.UUID() 16 bit or 128 bit
