@@ -134,10 +134,20 @@ _adv_TX_service = (ubluetooth.UUID('30ff6dae-fbfe-453b-8a99-9688fea23832'), ublu
 #set the ubluetooth flag for write
 _adv_RX_service = (ubluetooth.UUID('fbdf3e86-c18c-4e5b-aace-e7cc03257f7c'), ubluetooth.FLAG_WRITE,)
 
-
 # MicroTrynkit Service
 #including the TX and RX characteristics created above.
 _my_service = ((_adv_service, (_adv_TX_service, _adv_RX_service,),),)
+
+
+
+#new service for the serial communication
+# User Data service 0x181C
+_serial_service = ubluetooth.UUID(0x181C)
+_serial_TX_service = (ubluetooth.UUID('f05d9919-02e3-4414-9cbc-5485e0af77d2'), ubluetooth.FLAG_READ,)
+_serial_RX_service = (ubluetooth.UUID('72f235e0-fb1c-4772-96f1-d55a445d5c89'), ubluetooth.FLAG_WRITE,)
+
+_my_serial_service = ((_serial_service,(_serial_TX_service, _serial_RX_service,),),)
+((_tx_handle, _rx_handle),)= bt.gatts_register_services(_my_serial_service)
 
 #start the gatt service
 # tx_handle is for the TX service to be used for the reads
