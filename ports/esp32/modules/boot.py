@@ -89,7 +89,7 @@ def bt_irq(event, data):
         temp = x.decode('utf-8')
         if(temp == 'erase'):
             # check if main.py exists in the flash memory
-            if(os.path.exists("main.py")):
+            if("main.py" in os.listdir()):
                 # since the file already exists, erase it so it can start new
                 os.remove('main.py')
         else:
