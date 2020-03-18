@@ -62,7 +62,16 @@ bt= BLE()
 # set active to True initializing the bluetooth module
 bt.active(1)
 
-#define the bt_irq
+############################################################
+#
+# bt_irq
+#
+# Notes: Handles the different interrupts for the GATT service
+# IRQ_CENTRAL_CONNECT - prints to terminal when connection happens
+# IRQ_GATTS_WRITE - handles the logic to save the data sent to flash
+# IRQ_CENTRAL_DISCONNECT - handles the disconnection and reboots the device
+#
+#############################################################
 def bt_irq(event, data):
     global timeCheck
     if event == _IRQ_CENTRAL_CONNECT:
@@ -79,7 +88,10 @@ def bt_irq(event, data):
         x = bt.gatts_read(rx_handle)
         temp = x.decode('utf-8')
         if(temp == 'erase'):
-            os.remove('main.py')
+            # check if main.py exists in the flash memory
+            if("main.py" in os.listdir()):
+                # since the file already exists, erase it so it can start new
+                os.remove('main.py')
         else:
             # add newline char to end of the line that was sent
             x = x + '\n'
