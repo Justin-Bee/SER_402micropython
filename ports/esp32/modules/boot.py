@@ -55,6 +55,7 @@ _IRQ_GATTC_INDICATE                  = const(1 << 14)
 time_after = time.time()
 time_before = time.time()
 timeCheck = False
+conn_handle = 0
 
 # create BLE variable
 bt= BLE()
@@ -76,6 +77,7 @@ def bt_irq(event, data):
     global timeCheck
     if event == _IRQ_CENTRAL_CONNECT:
         print("IRQ_CENTRAL_CONNECT")
+        conn_handle, addr_type, addr = data
     elif event == _IRQ_CENTRAL_DISCONNECT:
         print("IRQ_CENTRAL_DISCONNECT")
         stop_timer()
@@ -104,7 +106,12 @@ def bt_irq(event, data):
         tx_handle = 'Upload finished'
     elif event == _IRQ_GATTS_READ_REQUEST:
         print("IRQ_GATTS_READ_REQUEST")
-        tx_handle = "Test"
+        x = 'test'
+        tx_handle = x.encode('utf-8')
+    elif event == _IRQ_GATTC_NOTIFY:
+        print("IRQ_GATTC_NOTIFY")
+        x = "TEST"
+        tx_handle = x.encode('utf-8')
 
 
 bt.irq(bt_irq)
@@ -139,7 +146,7 @@ _adv_service = ubluetooth.UUID(0x1825)
 #UUID for the TX characteristic - 30ff6dae-fbfe-453b-8a99-9688fea23832
 #UUID created by https://www.uuidgenerator.net/version4
 #set the ubluetooth flag for read
-_adv_TX_service = (ubluetooth.UUID('30ff6dae-fbfe-453b-8a99-9688fea23832'), ubluetooth.FLAG_READ,)
+_adv_TX_service = (ubluetooth.UUID('30ff6dae-fbfe-453b-8a99-9688fea23832'), ubluetooth.FLAG_READ | ubluetooth.FLAG_NOTIFY,)
 
 #UUID for the RX characteristic - fbdf3e86-c18c-4e5b-aace-e7cc03257f7c
 #UUID created by https://www.uuidgenerator.net/version4
@@ -176,6 +183,9 @@ bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))
 
 #this function sends to data from esp32 to be read from connected device. Just for testing purposes now.
 bt.gatts_write(tx_handle, str.encode("hopefully this works"))
+
+#adding gatt notify
+#bt.gatts_notify(conn_handle, tx_handle,)
 
 #ubluetooth.UUID() 16 bit or 128 bit
 
