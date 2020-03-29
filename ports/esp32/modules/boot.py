@@ -9,8 +9,9 @@
 #
 ###########################################################################
 
-import ubluetooth
-from ubluetooth import BLE
+
+import bluetooth
+from bluetooth import BLE
 import machine
 import time
 import os
@@ -55,8 +56,7 @@ _IRQ_GATTC_INDICATE                  = const(1 << 14)
 time_after = time.time()
 time_before = time.time()
 timeCheck = False
-conn_handle = 0
-
+global conn_handle
 # create BLE variable
 bt= BLE()
 
@@ -141,17 +141,17 @@ def adv_encode_name(name):
     return adv_encode(_ADV_TYPE_NAME, name.encode())
 
 # set the UUID for the GATT Service
-_adv_service = ubluetooth.UUID(0x1825)
+_adv_service = bluetooth.UUID(0x1825)
 
 #UUID for the TX characteristic - 30ff6dae-fbfe-453b-8a99-9688fea23832
 #UUID created by https://www.uuidgenerator.net/version4
 #set the ubluetooth flag for read
-_adv_TX_service = (ubluetooth.UUID('30ff6dae-fbfe-453b-8a99-9688fea23832'), ubluetooth.FLAG_READ | ubluetooth.FLAG_NOTIFY,)
+_adv_TX_service = (bluetooth.UUID('30ff6dae-fbfe-453b-8a99-9688fea23832'), bluetooth.FLAG_READ)
 
 #UUID for the RX characteristic - fbdf3e86-c18c-4e5b-aace-e7cc03257f7c
 #UUID created by https://www.uuidgenerator.net/version4
 #set the ubluetooth flag for write
-_adv_RX_service = (ubluetooth.UUID('fbdf3e86-c18c-4e5b-aace-e7cc03257f7c'), ubluetooth.FLAG_WRITE,)
+_adv_RX_service = (bluetooth.UUID('fbdf3e86-c18c-4e5b-aace-e7cc03257f7c'), bluetooth.FLAG_WRITE,)
 
 # MicroTrynkit Service
 #including the TX and RX characteristics created above.
@@ -161,12 +161,12 @@ _my_service = ((_adv_service, (_adv_TX_service, _adv_RX_service,),),)
 
 #new service for the serial communication
 # User Data service 0x181C
-_serial_service = ubluetooth.UUID(0x181C)
-_serial_TX_service = (ubluetooth.UUID('f05d9919-02e3-4414-9cbc-5485e0af77d2'), ubluetooth.FLAG_READ,)
-_serial_RX_service = (ubluetooth.UUID('72f235e0-fb1c-4772-96f1-d55a445d5c89'), ubluetooth.FLAG_WRITE,)
+_serial_service = bluetooth.UUID(0x181C)
+_serial_TX_service = (bluetooth.UUID('f05d9919-02e3-4414-9cbc-5485e0af77d2'), bluetooth.FLAG_READ,)
+_serial_RX_service = (bluetooth.UUID('72f235e0-fb1c-4772-96f1-d55a445d5c89'), bluetooth.FLAG_WRITE,)
 
-_my_serial_service = ((_serial_service,(_serial_TX_service, _serial_RX_service,),),)
-((_tx_handle, _rx_handle),)= bt.gatts_register_services(_my_serial_service)
+#_my_serial_service = ((_serial_service,(_serial_TX_service, _serial_RX_service,),),)
+#((_tx_handle, _rx_handle),)= bt.gatts_register_services(_my_serial_service)
 
 #start the gatt service
 # tx_handle is for the TX service to be used for the reads
@@ -185,12 +185,12 @@ bt.gap_advertise(100000, adv_encode_name('MicroTrynkit'))
 bt.gatts_write(tx_handle, str.encode("hopefully this works"))
 
 #adding gatt notify
-#bt.gatts_notify(conn_handle, tx_handle,)
+#bt.gatts_notify(conn_handle, 1)
 
-#ubluetooth.UUID() 16 bit or 128 bit
-
-# building now with ESP-IDF 3.3.1 has support for BLE and WiFi
-# this could be a better option going forward incase BLE does not work out with the upload time
+# adding banner message to the device
+print("SER 402 - Project 5 Trynkit")
+print("Micropython on ESP32")
+print("v1.12.12")
 
 #END OF FILE
 ########################################################################################################################
