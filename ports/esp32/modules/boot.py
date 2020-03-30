@@ -57,11 +57,19 @@ time_after = time.time()
 time_before = time.time()
 timeCheck = False
 global conn_handle
+
+
 # create BLE variable
 bt= BLE()
 
 # set active to True initializing the bluetooth module
 bt.active(1)
+
+# adding banner message to the device
+print("****************************************************")
+print("* SER 402 - Project 5 Trynkit                      *")
+print("* Micropython on ESP32                             *")
+print("****************************************************")
 
 ############################################################
 #
@@ -187,10 +195,6 @@ bt.gatts_write(tx_handle, str.encode("hopefully this works"))
 #adding gatt notify
 #bt.gatts_notify(conn_handle, 1)
 
-# adding banner message to the device
-print("SER 402 - Project 5 Trynkit")
-print("Micropython on ESP32")
-print("v1.12.12")
 
 #END OF FILE
 ########################################################################################################################
