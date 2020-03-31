@@ -15,9 +15,12 @@ from bluetooth import BLE
 import machine
 import time
 import os
+import io
+import micropython
 
 from micropython import const
 import struct
+from ble_uart_peripheral import BLEUART
 
 # Advertising payloads are repeated packets of the following form:
 #   1 byte data length (N + 1)
@@ -122,7 +125,7 @@ def bt_irq(event, data):
         tx_handle = x.encode('utf-8')
 
 
-bt.irq(bt_irq)
+#bt.irq(bt_irq)
 
 # timer() - this function gets the time at the beginning of the upload
 def timer():
@@ -165,17 +168,6 @@ _adv_RX_service = (bluetooth.UUID('fbdf3e86-c18c-4e5b-aace-e7cc03257f7c'), bluet
 #including the TX and RX characteristics created above.
 _my_service = ((_adv_service, (_adv_TX_service, _adv_RX_service,),),)
 
-
-
-#new service for the serial communication
-# User Data service 0x181C
-_serial_service = bluetooth.UUID(0x181C)
-_serial_TX_service = (bluetooth.UUID('f05d9919-02e3-4414-9cbc-5485e0af77d2'), bluetooth.FLAG_READ,)
-_serial_RX_service = (bluetooth.UUID('72f235e0-fb1c-4772-96f1-d55a445d5c89'), bluetooth.FLAG_WRITE,)
-
-#_my_serial_service = ((_serial_service,(_serial_TX_service, _serial_RX_service,),),)
-#((_tx_handle, _rx_handle),)= bt.gatts_register_services(_my_serial_service)
-
 #start the gatt service
 # tx_handle is for the TX service to be used for the reads
 ((tx_handle, rx_handle),)= bt.gatts_register_services(_my_service)
@@ -195,6 +187,75 @@ bt.gatts_write(tx_handle, str.encode("hopefully this works"))
 #adding gatt notify
 #bt.gatts_notify(conn_handle, 1)
 
+_MP_STREAM_POLL = const(3)
+_MP_STREAM_POLL_RD = const(0x0001)
+
+# TODO: Remove this when STM32 gets machine.Timer.
+if hasattr(machine, 'Timer'):
+    _timer = machine.Timer(-1)
+else:
+    _timer = None
+
+# Batch writes into 50ms intervals.
+def schedule_in(handler, delay_ms):
+    def _wrap(_arg):
+        handler()
+    if _timer:
+        _timer.init(mode=machine.Timer.ONE_SHOT, period=delay_ms, callback=_wrap)
+    else:
+        micropython.schedule(_wrap, None)
+
+# Simple buffering stream to support the dupterm requirements.
+class BLEUARTStream(io.IOBase):
+    def __init__(self, uart):
+        self._uart = uart
+        self._tx_buf = bytearray()
+        self._uart.irq(self._on_rx)
+
+    def _on_rx(self):
+        # Needed for ESP32.
+        if hasattr(os, 'dupterm_notify'):
+            os.dupterm_notify(None)
+
+    def read(self, sz=None):
+        return self._uart.read(sz)
+
+    def readinto(self, buf):
+        avail = self._uart.read(len(buf))
+        if not avail:
+            return None
+        for i in range(len(avail)):
+            buf[i] = avail[i]
+        return len(avail)
+
+    def ioctl(self, op, arg):
+        if op == _MP_STREAM_POLL:
+            if self._uart.any():
+                return _MP_STREAM_POLL_RD
+        return 0
+
+    def _flush(self):
+        data = self._tx_buf[0:100]
+        self._tx_buf = self._tx_buf[100:]
+        self._uart.write(data)
+        if self._tx_buf:
+            schedule_in(self._flush, 50)
+
+    def write(self, buf):
+        empty = not self._tx_buf
+        self._tx_buf += buf
+        if empty:
+            schedule_in(self._flush, 50)
+
+
+def start():
+   # ble = bluetooth.BLE()
+    uart = BLEUART(bt, name='MicroTrynkit')
+    stream = BLEUARTStream(uart)
+
+    os.dupterm(stream)
+
+#start()
 
 #END OF FILE
 ########################################################################################################################
