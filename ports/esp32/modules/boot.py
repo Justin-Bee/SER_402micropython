@@ -17,6 +17,7 @@ import time
 import os
 from micropython import const
 import struct
+import io
 from ble_advertising import advertising_payload
 
 # Advertising payloads are repeated packets of the following form:
@@ -52,10 +53,18 @@ _IRQ_GATTC_WRITE_STATUS              = const(1 << 12)
 _IRQ_GATTC_NOTIFY                    = const(1 << 13)
 _IRQ_GATTC_INDICATE                  = const(1 << 14)
 
+_MP_STREAM_POLL = const(3)
+_MP_STREAM_POLL_RD = const(0x0001)
+
 #Global functions for the timer
 time_after = time.time()
 time_before = time.time()
 timeCheck = False
+
+if hasattr(machine, 'Timer'):
+    _timer = machine.Timer(-1)
+else:
+    _timer = None
 
 # set the UUID for the GATT Service
 _adv_service = bluetooth.UUID(0x1825)
@@ -124,25 +133,31 @@ class MICROTRYNKIT:
             #for testing purposes I had to remove the reset to connect with nrfConnect sniffer app
             machine.reset()
         elif event == _IRQ_GATTS_WRITE:
-            print("IRQ_GATTS_WRITE")
-            timer()
-            x = self._ble.gatts_read(self._rx_handle)
-            temp = x.decode('utf-8')
-            if(temp == 'erase'):
-                # check if main.py exists in the flash memory
-                if("main.py" in os.listdir()):
-                    # since the file already exists, erase it so it can start new
-                    os.remove('main.py')
-            else:
+            conn_handle, value_handle, = data
+            if conn_handle in self._connections and value_handle == self._rx_handle:
+                self._rx_buffer += self._ble.gatts_read(self._rx_handle)
+                if self._handler:
+                    self._handler()
+            #TODO need to add a framing character to the upload data and check for that if has framing character then use that as upload.
+            #print("IRQ_GATTS_WRITE")
+            #timer()
+            #x = self._ble.gatts_read(self._rx_handle)
+            #temp = x.decode('utf-8')
+            #if(temp == 'erase'):
+            #    # check if main.py exists in the flash memory
+            #    if("main.py" in os.listdir()):
+            #        # since the file already exists, erase it so it can start new
+            #        os.remove('main.py')
+            #else:
                 # add newline char to end of the line that was sent
-                x = x + '\n'
+            #    x = x + '\n'
                 # create a new file or append to existing
-                f = open('main.py', 'a')
+            #    f = open('main.py', 'a')
                 #write to the file
-                f.write(x)
+            #    f.write(x)
                 #close the file
-                f.close()
-            tx_handle = 'Upload finished'
+            #    f.close()
+            #tx_handle = 'Upload finished'
         elif event == _IRQ_GATTS_READ_REQUEST:
             print("IRQ_GATTS_READ_REQUEST")
             x = 'test'
@@ -184,16 +199,70 @@ def adv_encode(adv_type, value):
 def adv_encode_name(name):
     return adv_encode(_ADV_TYPE_NAME, name.encode())
 
+# Simple buffering stream to support the dupterm requirements.
+class BLEUARTStream(io.IOBase):
+    def __init__(self, uart):
+        self._uart = uart
+        self._tx_buf = bytearray()
+        self._uart.irq(self._on_rx)
+
+    def _on_rx(self):
+        # Needed for ESP32.
+        if hasattr(os, "dupterm_notify"):
+            os.dupterm_notify(None)
+
+    def read(self, sz=None):
+        return self._uart.read(sz)
+
+    def readinto(self, buf):
+        avail = self._uart.read(len(buf))
+        if not avail:
+            return None
+        for i in range(len(avail)):
+            buf[i] = avail[i]
+        return len(avail)
+
+    def ioctl(self, op, arg):
+        if op == _MP_STREAM_POLL:
+            if self._uart.any():
+                return _MP_STREAM_POLL_RD
+        return 0
+
+    def _flush(self):
+        data = self._tx_buf[0:100]
+        self._tx_buf = self._tx_buf[100:]
+        self._uart.write(data)
+        if self._tx_buf:
+            schedule_in(self._flush, 50)
+
+    def write(self, buf):
+        empty = not self._tx_buf
+        self._tx_buf += buf
+        if empty:
+            schedule_in(self._flush, 50)
+
+def schedule_in(handler, delay_ms):
+    def _wrap(_arg):
+        handler()
+    if _timer:
+        _timer.init(mode=machine.Timer.ONE_SHOT, period=delay_ms, callback=_wrap)
+    else:
+        micropython.schedule(_wrap, None)
+
+
 
 ble = bluetooth.BLE()
-bt = MICROTRYNKIT(ble)
+uart = MICROTRYNKIT(ble)
+stream = BLEUARTStream(uart)
+
+os.dupterm(stream)
 
 # increase the size of the buffer, default is 20 bytes
 #need to ensure we pick something that is big enough for file transfers
 #bt.gatts_write(rx_handle, bytes(1024))
 
 #adding gatt notify
-bt.write("TESTING 1,2,3....")
+#bt.write("TESTING 1,2,3....")
 
 
 #END OF FILE
