@@ -14,6 +14,7 @@ from ubluetooth import BLE
 import machine
 import time
 import os
+from machine import ADC, Pin
 
 from micropython import const
 import struct
@@ -62,6 +63,18 @@ bt= BLE()
 
 # set active to True initializing the bluetooth module
 bt.active(1)
+
+#adc for the battery level check
+adc = machine.ADC(Pin(32))
+val = adc.read()
+
+# adding banner message to the device
+print("****************************************************")
+print("* SER 402 - Project 5 Trynkit                      *")
+print("* Micropython on ESP32                             *")
+print("* Battery Voltage:"+ str(val))
+print("****************************************************")
+
 
 ############################################################
 #
